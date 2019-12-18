@@ -186,7 +186,7 @@ function rina_board(subs,selected_lines)
 			if btn_bit=="Cancel" then
 				aegisub.cancel()
 			end
-			if btn_bit=="Back<" or btn_bit=="Cancel" then
+			if btn_bit=="Back<" then
 				goto main_dia
 			end
 		end
