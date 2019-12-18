@@ -2,7 +2,7 @@ local tr = aegisub.gettext
 script_name = tr("Rina-Board")
 script_description = tr("Generate Rina Emoji")
 script_author = "domo&kiriko"
-script_version = "0.4"
+script_version = "0.5"
 
 
 function is_include(value, tbl)
@@ -165,6 +165,12 @@ function rina_board(subs,selected_lines)
 	end
 	--Update bitmap_conf
 	bitmap_conf={}
+	for x=1,xn do
+		bitmap_conf[#bitmap_conf+1]={x=x, y=0, class="label",label=tostring(x)}
+	end
+	for y=1,yn do
+		bitmap_conf[#bitmap_conf+1]={x=0, y=y, class="label",label=tostring(y)}
+	end
 	for k,v in pairs(res_bit) do
 		y,x=string.match(k,"(%d+),(%d+)")
 		bitmap_conf[#bitmap_conf+1]={x=x,y=y,class="checkbox",name="{"..tostring(y)..","..tostring(x).."}",value=v}
