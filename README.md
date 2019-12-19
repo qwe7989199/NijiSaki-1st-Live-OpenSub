@@ -14,4 +14,4 @@
 |優木せつな|DIN+Gothic|???+Gothic||
 |エマ・ヴェルデ|TsukuCOldMin|SkipStd-B||
 |天王寺璃奈|Takarhythm|CometStd-B||
-|表題曲|RodinMaria-B|MaruGothic||
+|表題曲|RodinMaria-B|MaruGothic|/|/|
