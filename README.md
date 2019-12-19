@@ -6,7 +6,7 @@
 |Character|1stアルバム Font|2ndアルバム Font|Color(HTML)|Color(ASS)|
 |----|----------|----------|---|---|
 |上原歩夢|TsukuMin-E|KikyouAStd-L|![#ff6b96](https://placehold.it/15/FF6B96/000000?text=+) `#FF6B96` |&H966BFF&|
-|中須かすみ|A1Gothic|AokaneStd-EB|![#727066](https://placehold.it/15/727066/000000?text=+) `#727066` |&H667072&|
+|中須かすみ|A1Gothic|AokaneStd-EB|![#FFE658](https://placehold.it/15/ffe658/000000?text=+) `#FFE658` |&H58E6FF&|
 |桜坂しずく||TsukuAOldMin-D|![#6AD2FF](https://placehold.it/15/6ad2ff/000000?text=+) `#6AD2FF` |&HFFD26A&|
 |朝香果林|Didot+Mincho||![#96A2FF](https://placehold.it/15/96a2ff/000000?text=+) `#96A2FF` |&HFFA296&|
 |宮下愛|GospelStd-EB|KafuNagomiStd-B|![#FFB153](https://placehold.it/15/ffb153/000000?text=+) `#FFB153` |&H53B1FF&|
