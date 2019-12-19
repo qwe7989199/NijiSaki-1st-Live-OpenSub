@@ -5,7 +5,7 @@
 ## BK字体整理  
 |Character|1stアルバム Font|2ndアルバム Font|Color(HTML)|Color(ASS)|
 |----|----------|----------|---|---|
-|上原歩夢|TsukuMin-E|KikyouAStd-L|![#ff6b96](https://placehold.it/15/FF6B96/000000?text=+) `#FF6B96` |
+|上原歩夢|TsukuMin-E|KikyouAStd-L|![#ff6b96](https://placehold.it/15/FF6B96/000000?text=+) `#FF6B96` |&H966BFF&|
 |中須かすみ|A1Gothic|AokaneStd-EB||
 |桜坂しずく||TsukuAOldMin-D||
 |朝香果林|Didot+Mincho|||
