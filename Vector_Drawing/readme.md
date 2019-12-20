@@ -12,6 +12,10 @@ star="m 11 -15 l 102 -102 l 15 -11 m 19 -3 l 145 0 l 19 3 m 15 11 l 103 103 l 11
 petal="m 0 -10 b -42 -61 -57 -111 -12 -150 l 0 -128 l 12 -150 b 57 -111 42 -61 0 -10 "
 ```
 
+### flower  
+<img src="https://github.com/qwe7989199/NijiSaki-1st-Live-OpenSub/blob/master/Vector_Drawing/flower.png" width="120">
+
+
 ### logo
 <img src="https://github.com/qwe7989199/NijiSaki-1st-Live-OpenSub/blob/master/Vector_Drawing/logo.png" width="500">  
 
