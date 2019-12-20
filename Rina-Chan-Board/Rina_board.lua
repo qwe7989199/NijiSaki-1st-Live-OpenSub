@@ -2,7 +2,7 @@ local tr = aegisub.gettext
 script_name = tr("Rina-Board")
 script_description = tr("Generate Rina Emoji")
 script_author = "domo&kiriko"
-script_version = "0.6"
+script_version = "0.8"
 
 
 function is_include(value, tbl)
@@ -64,22 +64,40 @@ function save_to_file(res_tbl,name)
 	data_file:close()
 end
 
-function gen_drawing(res_bit,colors,side_length,merge,subs)
-	--Generate baseboard drawing
-	
-	
-	
-	--Generate highlight drawing
+function gen_drawing(res_bit,colors,side_length,merge,gen_base,center_pos,subs)
 	for k,v in ipairs(subs) do
 		if v.class=="dialogue" then line=v end
 	end
+	line.text=""
+	--Generate baseboard drawing
+	if gen_base then
+		for y=1,yn do
+			for x=1,xn do
+				if baseboard[y][x]==1 then
+					line.text=line.text..string.format("m %d %d l %d %d l %d %d l %d %d ",
+											(x-1)*1.2*side_length-15.5*side_length  ,  (y-1)*1.2*side_length-15.5*side_length,
+											(x*1.2-0.2)*side_length-15.5*side_length,  (y-1)*1.2*side_length-15.5*side_length,
+											(x*1.2-0.2)*side_length-15.5*side_length,(y*1.2-0.2)*side_length-15.5*side_length,
+											(x-1)*1.2*side_length-15.5*side_length  ,(y*1.2-0.2)*side_length-15.5*side_length)
+				end
+			end	
+		end
+		line.text=string.format("{\\an7\\pos(%d,%d)\\p1\\1c%s\\1a%s\\3c%s\\3a%s}",
+					center_pos[1],center_pos[2],
+					colors.base_c,colors.base_a,colors.base_bord_c,colors.base_bord_a)
+					..line.text
+		subs[0]=line
+	end
+	
+	--Generate highlight drawing
+	line.layer=1
 	local x,y={},{}
+	line.text=""
 	for k,v in pairs(res_bit) do
 		if v then
 			x[#x+1],y[#y+1]=string.match(k,"{(%d+),(%d+)}")
 		end
 	end
-	line.text=""
 	if merge then
 		for i=1,#x do
 			line.text=line.text..string.format("m %d %d l %d %d l %d %d l %d %d ",
@@ -88,15 +106,13 @@ function gen_drawing(res_bit,colors,side_length,merge,subs)
 									(x[i]*1.2-0.2)*side_length-15.5*side_length,(y[i]*1.2-0.2)*side_length-15.5*side_length,
 									(x[i]-1)*1.2*side_length-15.5*side_length  ,(y[i]*1.2-0.2)*side_length-15.5*side_length)
 		end
-		--TODO add position
-		line.text="{\\an7\\pos(0,0)\\p1}"..line.text
+		line.text=string.format("{\\an7\\pos(%d,%d)\\p1}",center_pos[1],center_pos[2])..line.text
 		subs[0]=line
 	else
 		for i=1,#x do
-		--TODO add position
 			line.text=string.format("{\\an7\\pos(%d,%d)\\p1}",
-						x[i]*1.2*side_length-15.5*side_length,
-						y[i]*1.2*side_length-15.5*side_length)..
+						x[i]*1.2*side_length-15.5*side_length+center_pos[1],
+						y[i]*1.2*side_length-15.5*side_length+center_pos[2])..
 					  string.format("m %d %d l %d %d l %d %d l %d %d ",
 						-side_length/2,-side_length/2,
 						 side_length/2,-side_length/2,
@@ -113,6 +129,7 @@ function rina_board(subs,selected_lines)
 	require'baseboard_data'
     local ADD=aegisub.dialog.display
 	local ADO=aegisub.debug.out
+	local x_res,y_res=aegisub.video_size()
     xn=26
     yn=22
 	eyes_type_tbl={}
@@ -130,6 +147,10 @@ function rina_board(subs,selected_lines)
 	end
 	for k,v in pairs(emoji_all) do
 		table.insert(all_type_tbl,k)
+	end
+	
+	if x_res and y_res then
+		pos_x,pos_y=x_res/2,y_res/2
 	end
 	
 	--Show functions of this script
@@ -152,13 +173,18 @@ function rina_board(subs,selected_lines)
 		{x=4, y=3, class="coloralpha", value="#C0C0C000",name="base_bord_c"},
 		{x=3, y=4, class="label", label="Side Length:"},
 		{x=4, y=4, class="intedit",name="side_length",value=10},
-		{x=3, y=5, class="checkbox",label="Generate Baseboard",name='gen_base',value=true},
+		{x=3, y=5, class="label", label="Center x:"},
+		{x=4, y=5, class="intedit",name="pos_x",value=pos_x or 0},
+		{x=3, y=6, class="label", label="Center y:"},
+		{x=4, y=6, class="intedit",name="pos_y",value=pos_y or 0},
+		{x=3, y=7, class="checkbox",label="Generate Baseboard",name='gen_base',value=true},
 	}
 	
-	btn_main, res_main=ADD(prim_dia_conf,{"Generate","Customize/Preview","Cancel"})
+	btn_main, res_main=ADD(prim_dia_conf,{"Generate","Customize/Preview","Cancel"},{close="Cancel"})
 	colors={}
 	colors['base_c'],colors['base_a']=HTML2ASS(res_main.base_c)
 	colors['base_bord_c'],colors['base_bord_a']=HTML2ASS(res_main.base_bord_c)
+	center_pos={res_main.pos_x,res_main.pos_y}
 	
 	if btn_main=="Cancel" then
 		aegisub.cancel()
@@ -189,49 +215,53 @@ function rina_board(subs,selected_lines)
 			end
 		end
 	end
-	
-	repeat
-		if btn_main=="Customize/Preview" then
-			from_back=true
-			btn_bit, res_bit=ADD(bitmap_conf,{"Back<","Generate","Save","Cancel"})
-			if btn_bit=="Save" then
-				btn_save,res_name=ADD({
-				{x=0,y=0,class="label",label="Input emoji name:"},
-				{x=0,y=1,class="edit",value="",name="emoji_name"}},
-				
-				{"OK","Cancel"})
-				emoji_name=res_name.emoji_name
-				if is_include(emoji_name,emoji_all) then
-					ADO("Same emoji name exists, please change the name.")
-				else
-					if btn_save=="OK" then
-						save_to_file(res_bit,emoji_name)
-						ADD({{class="label",label="Saved."}},{"OK"},{close='OK'})
+	--Generate drawing directly
+	if btn_main=="Generate" then
+		gen_drawing(bitmap_conf,colors,res_main.side_length,res_main.merge,res_main.gen_base,center_pos,subs)
+	else
+		repeat
+			if btn_main=="Customize/Preview" then
+				from_back=true
+				btn_bit, res_bit=ADD(bitmap_conf,{"Back<","Generate","Save","Cancel"})
+				if btn_bit=="Save" then
+					btn_save,res_name=ADD({
+					{x=0,y=0,class="label",label="Input emoji name:"},
+					{x=0,y=1,class="edit",value="",name="emoji_name"}},
+					
+					{"OK","Cancel"})
+					emoji_name=res_name.emoji_name
+					if is_include(emoji_name,emoji_all) then
+						ADO("Same emoji name exists, please change the name.")
+					else
+						if btn_save=="OK" then
+							save_to_file(res_bit,emoji_name)
+							ADD({{class="label",label="Saved."}},{"OK"},{close='OK'})
+						end
 					end
 				end
+				--Update bitmap_conf
+				bitmap_conf={}
+				for x=1,xn do
+					bitmap_conf[#bitmap_conf+1]={x=x, y=0, class="label",label=tostring(x)}
+				end
+				for y=1,yn do
+					bitmap_conf[#bitmap_conf+1]={x=0, y=y, class="label",label=tostring(y)}
+				end
+				for k,v in pairs(res_bit) do
+					x,y=string.match(k,"(%d+),(%d+)")
+					bitmap_conf[#bitmap_conf+1]={x=x,y=y,class="checkbox",name="{"..tostring(x)..","..tostring(y).."}",value=v}
+				end
+				if btn_bit=="Cancel" then
+					aegisub.cancel()
+				end
+				if btn_bit=="Back<" then
+					goto main_dia
+				end
 			end
-			--Update bitmap_conf
-			bitmap_conf={}
-			for x=1,xn do
-				bitmap_conf[#bitmap_conf+1]={x=x, y=0, class="label",label=tostring(x)}
-			end
-			for y=1,yn do
-				bitmap_conf[#bitmap_conf+1]={x=0, y=y, class="label",label=tostring(y)}
-			end
-			for k,v in pairs(res_bit) do
-				x,y=string.match(k,"(%d+),(%d+)")
-				bitmap_conf[#bitmap_conf+1]={x=x,y=y,class="checkbox",name="{"..tostring(x)..","..tostring(y).."}",value=v}
-			end
-			if btn_bit=="Cancel" then
-				aegisub.cancel()
-			end
-			if btn_bit=="Back<" then
-				goto main_dia
-			end
-		end
-	until (btn_bit=="Generate" or btn_main=="Generate")
-	gen_drawing(res_bit,colors,res_main.side_length,res_main.merge,subs)
-	
+		until (btn_bit=="Generate")
+		gen_drawing(res_bit,colors,res_main.side_length,res_main.merge,res_main.gen_base,center_pos,subs)
+	end
+
 end
 
 aegisub.register_macro(script_name, script_description, rina_board)
