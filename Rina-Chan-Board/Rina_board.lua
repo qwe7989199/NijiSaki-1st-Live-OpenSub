@@ -67,10 +67,8 @@ function save_to_file(res_tbl,name)
 	data_file:close()
 end
 
-function gen_drawing(res_bit,subs)
-	for k,v in ipairs(subs) do
-		if v.class=="dialogue" then line=v end
-	end
+function gen_drawing(res_bit,base_c,base_bord_c,pos_x,pos_y,side_length,gen_base,merge,subs,selected_lines)
+    line=subs[selected_lines[1]]
 	line.text=""
 	--Generate baseboard drawing
     if gen_base then
@@ -132,7 +130,7 @@ function gen_drawing(res_bit,subs)
 end
 
 function rina_board(subs,selected_lines)
-	require'baseboard_data'
+    require'baseboard_data'
     local ADD=aegisub.dialog.display
 	local ADO=aegisub.debug.out
     local x_res,y_res=aegisub.video_size()
@@ -216,7 +214,7 @@ function rina_board(subs,selected_lines)
 	end
 	--Generate drawing directly
 	if btn_main=="Generate" then
-		gen_drawing(bitmap_conf,subs)
+		gen_drawing(bitmap_conf,base_c,base_bord_c,pos_x,pos_y,side_length,gen_base,merge,subs,selected_lines)
 	else
 		repeat
 			if btn_main=="Customize/Preview" then
@@ -258,7 +256,7 @@ function rina_board(subs,selected_lines)
 				end
 			end
 		until (btn_bit=="Generate")
-		gen_drawing(res_bit,subs)
+		gen_drawing(res_bit,base_c,base_bord_c,pos_x,pos_y,side_length,gen_base,merge,subs,selected_lines)
 	end
 
 end
