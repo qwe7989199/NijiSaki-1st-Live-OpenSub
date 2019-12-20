@@ -9,7 +9,7 @@ function is_include(value, tbl)
 	if value==nil or tbl==nil then
 		return false
 	end
-	for k,v in ipairs(tbl) do
+	for k,v in pairs(tbl) do
 		if type(value)~="table" and v == value then
 			return true
 		elseif type(value)=="table" then
@@ -53,24 +53,30 @@ function save_to_file(res_tbl,name)
 	local ADO=aegisub.debug.out
 	local tbl_str="\n".."emoji_all"..string.format('["%s"]={',name)
 	includepath=ADP("?data").."\\automation\\include\\"
-	data_file = io.open(includepath.."baseboard_data.lua" ,"a")
+    data_file = io.open(includepath.."baseboard_data.lua" ,"a")
+    emoji_all[name]={}
 	for k,v in pairs(res_tbl) do
 		if v==true then
-			tbl_str=tbl_str..k..","
+            tbl_str=tbl_str..k..","
+            local x,y = string.match(k,"{(%d+),(%d+)}")
+            table.insert(emoji_all[name],{x,y})
 		end
-	end
+    end
 	tbl_str=tbl_str.."}\n"
 	data_file:write(tbl_str)
 	data_file:close()
 end
 
-function gen_drawing(res_bit,colors,side_length,merge,gen_base,center_pos,subs)
+function gen_drawing(res_bit,subs)
 	for k,v in ipairs(subs) do
 		if v.class=="dialogue" then line=v end
 	end
 	line.text=""
 	--Generate baseboard drawing
-	if gen_base then
+    if gen_base then
+        colors={}
+	    colors['base_c'],colors['base_a']=HTML2ASS(base_c)
+        colors['base_bord_c'],colors['base_bord_a']=HTML2ASS(base_bord_c)
 		for y=1,yn do
 			for x=1,xn do
 				if baseboard[y][x]==1 then
@@ -83,7 +89,7 @@ function gen_drawing(res_bit,colors,side_length,merge,gen_base,center_pos,subs)
 			end	
 		end
 		line.text=string.format("{\\an7\\pos(%d,%d)\\p1\\1c%s\\1a%s\\3c%s\\3a%s}",
-					center_pos[1],center_pos[2],
+					pos_x,pos_y,
 					colors.base_c,colors.base_a,colors.base_bord_c,colors.base_bord_a)
 					..line.text
 		subs[0]=line
@@ -94,8 +100,10 @@ function gen_drawing(res_bit,colors,side_length,merge,gen_base,center_pos,subs)
 	local x,y={},{}
 	line.text=""
 	for k,v in pairs(res_bit) do
-		if v then
-			x[#x+1],y[#y+1]=string.match(k,"{(%d+),(%d+)}")
+        if v == true then
+            x[#x+1],y[#y+1]=string.match(k,"{(%d+),(%d+)}")
+        elseif type(v) == "table" and v.value then
+            x[#x+1],y[#y+1]=v.x,v.y
 		end
 	end
 	if merge then
@@ -106,13 +114,13 @@ function gen_drawing(res_bit,colors,side_length,merge,gen_base,center_pos,subs)
 									(x[i]*1.2-0.2)*side_length-15.5*side_length,(y[i]*1.2-0.2)*side_length-15.5*side_length,
 									(x[i]-1)*1.2*side_length-15.5*side_length  ,(y[i]*1.2-0.2)*side_length-15.5*side_length)
 		end
-		line.text=string.format("{\\an7\\pos(%d,%d)\\p1}",center_pos[1],center_pos[2])..line.text
+		line.text=string.format("{\\an7\\pos(%d,%d)\\p1}",pos_x,pos_y)..line.text
 		subs[0]=line
 	else
 		for i=1,#x do
 			line.text=string.format("{\\an7\\pos(%d,%d)\\p1}",
-						x[i]*1.2*side_length-15.5*side_length+center_pos[1],
-						y[i]*1.2*side_length-15.5*side_length+center_pos[2])..
+						x[i]*1.2*side_length-15.5*side_length+pos_x,
+						y[i]*1.2*side_length-15.5*side_length+pos_y)..
 					  string.format("m %d %d l %d %d l %d %d l %d %d ",
 						-side_length/2,-side_length/2,
 						 side_length/2,-side_length/2,
@@ -120,34 +128,28 @@ function gen_drawing(res_bit,colors,side_length,merge,gen_base,center_pos,subs)
 						-side_length/2, side_length/2)
 			subs[0]=line
 		end
-	
 	end
-
 end
 
 function rina_board(subs,selected_lines)
 	require'baseboard_data'
     local ADD=aegisub.dialog.display
 	local ADO=aegisub.debug.out
-	local x_res,y_res=aegisub.video_size()
+    local x_res,y_res=aegisub.video_size()
+    local pos_x,pos_y,side_length = 0,0,10
+    local base_c,base_bord_c="#FFFFFF00","#C0C0C000"
+    local use_all,merge,gen_base=false,true,true
+    local eyes_type,mouth_type,all_type="blank","blank","blank"
     xn=26
     yn=22
-	eyes_type_tbl={}
-	mouth_type_tbl={}
-	all_type_tbl={}
-	eyes_type="blank"
-	mouth_type="blank"
-	all_type="blank"
 	--Load saved emoji table
-	for k,v in pairs(emoji_eyes) do
-		table.insert(eyes_type_tbl,k)
-	end
-	for k,v in pairs(emoji_mouth) do
-		table.insert(mouth_type_tbl,k)
-	end
-	for k,v in pairs(emoji_all) do
-		table.insert(all_type_tbl,k)
-	end
+    local get_type_tbl = function(emoji_tbl)
+        local type_tbl = {}
+        for k,v in pairs(emoji_tbl) do
+            table.insert(type_tbl,k)
+        end
+        return type_tbl
+    end
 	
 	if x_res and y_res then
 		pos_x,pos_y=x_res/2,y_res/2
@@ -159,41 +161,38 @@ function rina_board(subs,selected_lines)
 		{x=0, y=0, class="label", label="Configuration"},
 		{x=0, y=1, class="label", label="Choose Emoji"},
 		{x=0, y=2, class="label", label="Eyes:"},
-		{x=1, y=2, class="dropdown", items=eyes_type_tbl, name="eyes_type", value=eyes_type},
+		{x=1, y=2, class="dropdown", items=get_type_tbl(emoji_eyes), name="eyes_type", value=eyes_type},
 		{x=0, y=3, class="label", label="Mouth:"},
-		{x=1, y=3, class="dropdown", items=mouth_type_tbl, name="mouth_type", value=mouth_type},
-		{x=0, y=4, class="checkbox",label="Use all",name='use_all',value=false},
-		{x=1, y=4, class="dropdown", items=all_type_tbl, name="all_type", value=all_type},
-		{x=0, y=5, class="checkbox",label="Merge",name='merge',value=true},
+		{x=1, y=3, class="dropdown", items=get_type_tbl(emoji_mouth), name="mouth_type", value=mouth_type},
+		{x=0, y=4, class="checkbox",label="Use all",name='use_all',value=use_all},
+		{x=1, y=4, class="dropdown", items=get_type_tbl(emoji_all), name="all_type", value=all_type},
+		{x=0, y=5, class="checkbox",label="Merge",name='merge',value=merge},
 		
 		{x=3, y=1, class="label", label="Style Config"},
 		{x=3, y=2, class="label", label="Base Color:"},
-		{x=4, y=2, class="coloralpha", value="#FFFFFF00",name="base_c"},
+		{x=4, y=2, class="coloralpha", value=base_c,name="base_c"},
 		{x=3, y=3, class="label", label="Base Bord Color:"},
-		{x=4, y=3, class="coloralpha", value="#C0C0C000",name="base_bord_c"},
+		{x=4, y=3, class="coloralpha", value=base_bord_c,name="base_bord_c"},
 		{x=3, y=4, class="label", label="Side Length:"},
-		{x=4, y=4, class="intedit",name="side_length",value=10},
+		{x=4, y=4, class="intedit",name="side_length",value=side_length},
 		{x=3, y=5, class="label", label="Center x:"},
-		{x=4, y=5, class="intedit",name="pos_x",value=pos_x or 0},
+		{x=4, y=5, class="intedit",name="pos_x",value=pos_x},
 		{x=3, y=6, class="label", label="Center y:"},
-		{x=4, y=6, class="intedit",name="pos_y",value=pos_y or 0},
-		{x=3, y=7, class="checkbox",label="Generate Baseboard",name='gen_base',value=true},
+		{x=4, y=6, class="intedit",name="pos_y",value=pos_y},
+		{x=3, y=7, class="checkbox",label="Generate Baseboard",name='gen_base',value=gen_base},
 	}
 	
 	btn_main, res_main=ADD(prim_dia_conf,{"Generate","Customize/Preview","Cancel"},{close="Cancel"})
-	colors={}
-	colors['base_c'],colors['base_a']=HTML2ASS(res_main.base_c)
-	colors['base_bord_c'],colors['base_bord_a']=HTML2ASS(res_main.base_bord_c)
-	center_pos={res_main.pos_x,res_main.pos_y}
-	
+    
+    pos_x, pos_y, side_length = res_main.pos_x, res_main.pos_y, res_main.side_length
+    base_c, base_bord_c = res_main.base_c, res_main.base_bord_c
+    use_all, merge,gen_base = res_main.use_all, res_main.merge, res_main.gen_base
+    eyes_type, mouth_type, all_type = res_main.eyes_type, res_main.mouth_type, res_main.all_type
+
 	if btn_main=="Cancel" then
 		aegisub.cancel()
 	end
-	
-	eyes_type=res_main.eyes_type
-	mouth_type=res_main.mouth_type
-	all_type=res_main.all_type
-	
+
 	eye_bit_tbl=emoji_eyes[res_main.eyes_type]
 	mouth_bit_tbl=emoji_mouth[res_main.mouth_type]
 	all_bit_tbl=emoji_all[res_main.all_type]
@@ -217,12 +216,12 @@ function rina_board(subs,selected_lines)
 	end
 	--Generate drawing directly
 	if btn_main=="Generate" then
-		gen_drawing(bitmap_conf,colors,res_main.side_length,res_main.merge,res_main.gen_base,center_pos,subs)
+		gen_drawing(bitmap_conf,subs)
 	else
 		repeat
 			if btn_main=="Customize/Preview" then
 				from_back=true
-				btn_bit, res_bit=ADD(bitmap_conf,{"Back<","Generate","Save","Cancel"})
+				btn_bit, res_bit=ADD(bitmap_conf,{"Back<","Generate","Save","Cancel"},{close="Cancel"})
 				if btn_bit=="Save" then
 					btn_save,res_name=ADD({
 					{x=0,y=0,class="label",label="Input emoji name:"},
@@ -230,8 +229,8 @@ function rina_board(subs,selected_lines)
 					
 					{"OK","Cancel"})
 					emoji_name=res_name.emoji_name
-					if is_include(emoji_name,emoji_all) then
-						ADO("Same emoji name exists, please change the name.")
+					if is_include(emoji_name,get_type_tbl(emoji_all)) then
+                        ADD({{class="label",label="Same emoji name exists, please change the name."}},{"OK"},{close='OK'})
 					else
 						if btn_save=="OK" then
 							save_to_file(res_bit,emoji_name)
@@ -259,7 +258,7 @@ function rina_board(subs,selected_lines)
 				end
 			end
 		until (btn_bit=="Generate")
-		gen_drawing(res_bit,colors,res_main.side_length,res_main.merge,res_main.gen_base,center_pos,subs)
+		gen_drawing(res_bit,subs)
 	end
 
 end
