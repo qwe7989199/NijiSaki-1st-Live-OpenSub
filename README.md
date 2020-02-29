@@ -15,3 +15,18 @@
 |エマ・ヴェルデ|TsukuCOldMin|SkipStd-B|![#79D834](https://placehold.it/15/79d834/000000?text=+) `#79D834` |&H34D879&|
 |天王寺璃奈|Takarhythm|CometStd-B|![#61616F](https://placehold.it/15/61616f/000000?text=+) `#61616F` |&H6F6161&|
 |表題曲|RodinMaria-B|MaruGothic|/|/|
+
+
+备选
+|Character|1stアルバム Font|2ndアルバム Font|Color(HTML)|Color(ASS)|
+|----|----------|----------|---|---|
+|上原歩夢|TsukuMin-E|KikyouAStd-L|![#F2A7B8](https://placehold.it/15/F2A7B8/000000?text=+) `#F2A7B8` |&HB8A7F2&|
+|中須かすみ|A1Gothic|AokaneStd-EB|![#DFD00D](https://placehold.it/15/DFD00D/000000?text=+) `#DFD00D` |&H0DD0DF&|
+|桜坂しずく||TsukuAOldMin-D|![#01B7ED](https://placehold.it/15/01B7ED/000000?text=+) `#01B7ED` |&HEDB701&|
+|朝香果林|Didot+Mincho||![#4A5EC6](https://placehold.it/15/4A5EC6/000000?text=+) `#4A5EC6` |&HC65E4A&|
+|宮下愛|GospelStd-EB|KafuNagomiStd-B|![#FF5800](https://placehold.it/15/FF5800/000000?text=+) `#FF5800` |&H0058FF&|
+|近江彼方|TsubameStd-R|ChiaroStd-B|![#A664A0](https://placehold.it/15/A664A0/000000?text=+) `#A664A0` |&HA064A6&|
+|優木せつな|DIN+Gothic|???+Gothic|![#D81C2F](https://placehold.it/15/D81C2F/000000?text=+) `#D81C2F` |&H2F1CD8&|
+|エマ・ヴェルデ|TsukuCOldMin|SkipStd-B|![#84C36E](https://placehold.it/15/84C36E/000000?text=+) `#84C36E` |&H6EC384&|
+|天王寺璃奈|Takarhythm|CometStd-B|![#61616F](https://placehold.it/15/61616f/000000?text=+) `#61616F` |&H6F6161&|
+|表題曲|RodinMaria-B|MaruGothic|/|/|
