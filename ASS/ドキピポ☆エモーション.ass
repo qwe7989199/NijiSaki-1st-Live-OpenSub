@@ -9,17 +9,6 @@ YCbCr Matrix: TV.709
 PlayResX: 1920
 PlayResY: 1080
 
-[Aegisub Project Garbage]
-Last Style Storage: 8BS
-Audio File: J:/TS/ラブライブ！虹ヶ咲学園スクールアイドル同好会 Memorial Disc ～Blooming Rainbow～/avs/ドキピポ☆エモーション.mkv
-Video File: J:/TS/ラブライブ！虹ヶ咲学園スクールアイドル同好会 Memorial Disc ～Blooming Rainbow～/avs/ドキピポ☆エモーション.mkv
-Video AR Mode: 4
-Video AR Value: 1.777778
-Video Zoom Percent: 0.750000
-Scroll Position: 96
-Active Line: 102
-Video Position: 6786
-
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: JP_rinaboard-furigana,FOT-DotGothic12 Std M,40,&H00FFFFFF,&H000000FF,&H006F6161,&H00000000,0,0,0,0,100,100,0,0,1,1,0,2,10,10,120,1
