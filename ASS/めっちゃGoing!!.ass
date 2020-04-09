@@ -9,16 +9,6 @@ YCbCr Matrix: TV.709
 PlayResX: 1920
 PlayResY: 1080
 
-[Aegisub Project Garbage]
-Audio File: J:/TS/ラブライブ！虹ヶ咲学園スクールアイドル同好会 Memorial Disc ～Blooming Rainbow～/avs/めっちゃGoing!!.mkv
-Video File: J:/TS/ラブライブ！虹ヶ咲学園スクールアイドル同好会 Memorial Disc ～Blooming Rainbow～/avs/めっちゃGoing!!.mkv
-Video AR Mode: 4
-Video AR Value: 1.777778
-Video Zoom Percent: 0.750000
-Scroll Position: 9
-Active Line: 16
-Video Position: 3417
-
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: JP_FX4-furigana,FOT-Gospel Std EB,35,&H00FFFFFF,&H000000FF,&H0053B1FF,&H00000000,0,0,0,0,100,100,0,0,1,1.5,0,2,10,10,100,1
