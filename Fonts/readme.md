@@ -1,5 +1,5 @@
 ## 有关字体  
-以下是字幕文件使用到的所有字体的列表，商业字体可在网络上自行搜索或参考[链接](https://share.dmhy.org/topics/view/516705_XZ.html)：  
+以下是字幕文件使用到的所有字体的列表，商业字体可在网络上自行搜索或参考[链接1](https://share.dmhy.org/topics/view/516705_XZ.html)或者[懒人链接](https://vmoe.info/6779)：  
 * 商业字体  
   * モリサワ  
     * A-OTF-TakarhythmMin-Medium.otf  
